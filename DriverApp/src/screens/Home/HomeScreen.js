@@ -1,213 +1,205 @@
-import React from 'react';
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import MapView, { Marker } from 'react-native-maps'; // map
+import {SafeAreaView, ScrollView, PermissionsAndroid, Text, View, TouchableOpacity, Image, Animated, Easing} from 'react-native';
+import {useRef, useState, useEffect, useContext} from 'react';
+import Images from '../../utils/sources';
+import axios from 'axios';
+import CustomButton from '../../components/CustomButton';
+import Geolocation from 'react-native-geolocation-service';
+import {AuthContext} from '../../context/AuthContext';
 
-import {Text} from 'react-native-paper';
-import Header from '../../components/Home/Header';
-import {PLACES_ICON} from '../../utils/address';
-import {classNames} from '../../utils/classNames';
-import {Driver, Recent} from '../../utils/sources';
+import {BASE_URL} from '../../config';
 
-const DESTINATIONS = [
-  {
-    name: 'DH KHTN',
-    address: '227 Nguyen Van Cu',
-  },
-  {
-    name: 'DH KT',
-    address: 'Nguyen Tri Phuong, Q10',
-  },
-  {
-    name: 'Ba Den Mountain',
-    address: 'TP Tay Ninh',
-  },
-];
-
-const PLACES = [
-  {
-    type: 'home',
-    name: 'Home',
-    address: 'TP HCM',
-  },
-  {
-    type: 'company',
-    name: 'Company',
-    address: 'TP HCM',
-  },
-  {
-    type: 'place',
-    name: 'Trường',
-    address: 'TP HCM',
-  },
-  {
-    type: 'place',
-    name: 'Trường 1',
-    address: 'TP HCM',
-  },
-  {
-    type: 'place',
-    name: 'Trường 2',
-    address: 'TP HCM',
-  },
-];
+import io from 'socket.io-client';
 
 const HomeScreen = ({navigation}) => {
-  // const [destination, setDestination] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [location, setLocation] = useState();
+  const [loadingText, setLoadingText] = useState('Loading');
+  const [isLoading, setIsLoading] = useState(true);
+  const isSocketConnectedRef = useRef(false);
+  const {userInfo} = useContext(AuthContext);
+  const [socket, setSocket] = useState(io("https://gofast-api.onrender.com/notification"));
+  const [hasFetchedCurrentLocation, setHasFetchedCurrentLocation] = useState(false);
 
-  // const handleChangeTab = () => {
-  //   // setActiveTab(tab);
-  //   // Xử lý thay đổi tab
-  //   // ...
-  // };
+  useEffect(() => {
+    let textAnimationInterval = null;
+    let loadingTimeout = null;
+
+    requestAccessPermission();
+      
+    if(!hasFetchedCurrentLocation){
+      getCurrentLocation();
+      setHasFetchedCurrentLocation(true);
+    }
+    
+    setIsLoading(true);
+    textAnimationInterval = setInterval(() => {
+      setLoadingText(prevText => {
+        return prevText.length >= 13 ? 'Loading' : `${prevText}.`;
+      });
+    }, 500);
+
+    if (!isSocketConnectedRef.current) {
+      socket.emit("driverAvailable", userInfo._id);
+      isSocketConnectedRef.current = true;
+      console.log("Check");
+      //TODO newBookings to global
+      socket.on("newBooking", (newBookings) => {
+        console.log("new booking", newBookings);
+        setOrders(newBookings);
+      });
+    }
+
+    loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+      clearInterval(textAnimationInterval);
+    }, 5000);
+
+    return () => {
+      clearInterval(textAnimationInterval);
+      clearTimeout(loadingTimeout);
+
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, []);
+
+  const requestAccessPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message:
+            'Using the location ',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the location');
+      } else {
+        console.log('Location permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+          let location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }
+          setLocation(location);
+      },
+      (error) => {
+          console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+  };
+  
+  
+  
+
+  const acceptBooking = (bookingId) =>{
+    socket.emit("acceptBooking", bookingId);
+    
+    // TODO updatedBooking to global
+    socket.on("bookingUpdate", (updatedBooking) => {
+      console.log("Received booking update:", updatedBooking.bookingStatus);
+    });
+
+    const dataInput = {
+      driverLocation: {
+        // lat: location.latitude,
+        // lng: location.longitude,
+        lat: 10.771928429159146,
+        lng: 106.6510009088608,
+      },
+    }
+    axios
+      .put(`${BASE_URL}/booking/driver/accept/${bookingId}`, dataInput)
+      .then(res => {
+        let bookingInfo = res.data.booking;
+        navigation.navigate('Map',{booking: bookingInfo});
+      })
+      .catch(e => {
+        console.log(`Booking error ${e}`);
+      });
+  };
+
 
   return (
-    <SafeAreaView className="flex-1 bg-green-100">
-      <ScrollView className="flex-1 bg-green-100 pb-4">
-        <Header />
-        <View className="flex flex-row items-center bg-white p-4 shadow rounded-2xl mx-4">
-          <MaterialIcons name="location-on" color="red" size={30} />
-          <TextInput placeholder="Where to?" />
+    <SafeAreaView className="flex bg-slate-200 h-full">
+      <ScrollView className="flex bg-slate-200">
+      <View className="h-[200px] bg-transparent">
+          <Image
+            source={Images.BgImg}
+            className="w-full h-[200px] opacity-80 -mt-2.5"
+          />
         </View>
-        <View className="px-4 py-6 bg-white m-4 rounded-2xl">
-          <Text style={styles.title}>Recently</Text>
-          {DESTINATIONS.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              className={classNames('border-b border-gray-300 mb-2 pb-2', {
-                'border-0': index + 1 === DESTINATIONS.length,
-              })}>
-              <View style={styles.rowContent}>
-                <Image source={Recent} className="mx-1 w-[25px] h-[25px]" />
-                <View className="flex flex-col ml-5">
-                  <Text className="text-base font-bold">{item.name}</Text>
-                  <Text className="text-sm text-gray-400">{item.address}</Text>
+        <View className='w-full flex justify-center items-center'>
+          <Text className='w-11/12 text-start font-bold text-black text-xl'>Chuyến đi đang chờ:</Text>
+        </View>
+        {isLoading ? (
+            <Text style={{marginTop: 10,
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: 'black',
+              alignSelf:'center'}}>{loadingText}</Text>
+        ) : (
+          <View className="pt-1 space-y-3 w-full flex justify-center items-center">
+          {orders && orders.length > 0? 
+            (orders.map((order, index) => {
+                const avatarURL = order.userId.avatar.url;
+                
+                return(
+                <View key={index}
+                className="flex flex-row items-center w-11/12 px-3 py-2 bg-white rounded-2xl">
+                <View className='w-1/4'>
+                  {avatarURL ? (
+                    <Image source={{uri: avatarURL }} className="w-20 h-20 rounded-full" />
+                  ) : (
+                    <View className="w-20 h-20 bg-slate-500 rounded-full" />
+                  )}
+                  <Text className="text-gray-400 text-center font-medium mt-1">
+                    {order.userId.displayName}
+                  </Text>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-
-          <Text style={styles.title}>Booking timer</Text>
-          <TouchableOpacity>
-            <View className="mb-4 rounded-lg h-20 justify-start items-center p-3 bg-green-300">
-              <Image source={Driver} className="mx-1 w-[30px] h-[30px]" />
-              <Text className="text-base font-bold">
-                Book a car by the hour
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="flex flex-row justify-between items-center">
-            <Text style={styles.title}>Favorite Place</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Address')}
-              className="w-8 h-8 flex items-center justify-center bg-[#ADD9B2] rounded-full">
-              <MaterialIcons name="arrow-forward" size={24} color="#2F9E44" />
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View className="flex flex-row gap-4">
-              {PLACES.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  className="flex flex-col gap-2 items-center">
-                  <View className="w-14 h-14 rounded-full flex items-center justify-center bg-[#ADD9B2]">
-                    <Image
-                      source={PLACES_ICON[item.type]}
-                      className="w-6 h-6"
+                <View className='flex flex-col items-end justify-end w-3/4'>
+                  <Text className="text-xl text-black font-medium">{order.destinationAddress.name}</Text>
+                  <Text className="text-teal-600 text-lg font-bold"> {order.price}VND</Text>
+                  <Text className="text-gray-400 font-medium mb-2">{(order.distance/1000).toFixed(1)}km - {(order.duration/60).toFixed(0)}p</Text>
+                  <View className="flex flex-row items-center ml-1 ">
+                    <CustomButton
+                        wrapperClass="py-2 px-3 m-0 mr-2 rounded-lg bg-white border-2 border-teal-600 flex flex-row items-center justify-center"
+                        textClass="text-teal-600 font-bold text-xs"
+                        label="Chấp nhận"
+                        onPress={() => 
+                          acceptBooking(order._id)
+                        }
+                        />
+                    <CustomButton
+                      wrapperClass="p-2 m-0 rounded-lg bg-teal-600 border-2 border-transparent flex flex-row items-center justify-center"
+                      textClass="text-white font-bold text-xs"
+                      label="Huỷ"
                     />
                   </View>
-                  <Text style={styles.label}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity
-                onPress={() => navigation.navigate('AddAddress')}
-                className="flex flex-col gap-2 items-center">
-                <View className="w-14 h-14 rounded-full flex items-center justify-center border-2 border-[#ADD9B2]">
-                  <MaterialIcons name="add" size={40} color="#ADD9B2" />
                 </View>
-                <Text style={styles.label}>New</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </View>
+              </View>);
+              })): (
+                <Text>Không có đơn hàng.</Text>
+              )}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  body: {
-    flex: 1,
-    marginTop: 0,
-    marginRight: 50,
-    marginLeft: 50,
-  },
-  rowContent: {
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  columnContent: {
-    flexDirection: 'column',
-    marginLeft: 20,
-  },
-  nameDes: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  address: {
-    fontSize: 14,
-    color: 'gray',
-  },
-  boder: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'lightgray',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  bookingTimer: {
-    marginTop: 10,
-    marginBottom: 10,
-    borderRadius: 6,
-    height: 80,
-    justifyContent: 'start',
-    alignItems: 'center',
-    padding: 10,
-  },
-  contentTimer: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  bgFavorite: {
-    backgroundColor: '#ADD9B2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 25,
-    width: 50,
-    height: 50,
-  },
-  label: {
-    marginTop: -10,
-    fontSize: 13,
-  },
-});
 
 export default HomeScreen;
