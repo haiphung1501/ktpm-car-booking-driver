@@ -65,7 +65,7 @@ const LoginScreen = ({navigation}) => {
           label={'Password'}
           icon={
             <Ionicons
-              name="ios-lock-closed-outline"
+              name="lock-closed-outline"
               size={20}
               color="#666"
               style={{marginRight: 5}}
