@@ -68,7 +68,7 @@ const HomeBottomTab = () => {
           tabBarLabel: 'Profile',
           tabBarColor: '#694fad',
           tabBarIcon: ({color}) => (
-            <Icon name="ios-person" color={color} size={26} />
+            <Icon name="person" color={color} size={26} />
           ),
         }}
       />
@@ -97,7 +97,7 @@ const ProfileStackScreen = ({navigation}) => {
           headerLeft: () => (
             <View>
               <Icon.Button
-                name="ios-menu"
+                name="menu"
                 size={25}
                 backgroundColor="#fff"
                 color="#000"

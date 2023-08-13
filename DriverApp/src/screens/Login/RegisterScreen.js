@@ -132,7 +132,7 @@ const RegisterScreen = ({navigation}) => {
           label={'Password'}
           icon={
             <Ionicons
-              name="ios-lock-closed-outline"
+              name="lock-closed-outline"
               size={20}
               color="#666"
               style={{marginRight: 5}}
@@ -147,7 +147,7 @@ const RegisterScreen = ({navigation}) => {
           label={'Confirm Password'}
           icon={
             <Ionicons
-              name="ios-lock-closed-outline"
+              name="lock-closed-outline"
               size={20}
               color="#666"
               style={{marginRight: 5}}
