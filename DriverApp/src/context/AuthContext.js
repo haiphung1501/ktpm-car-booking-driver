@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, {createContext, useState, useEffect} from 'react';
 import {BASE_URL} from '../config';
+import {useGlobalStore} from '../store/globalStore';
 
 export const AuthContext = createContext();
 
@@ -9,6 +10,8 @@ export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+
+  const setSocket = useGlobalStore.use.setSocket();
 
   const register = async (username, password, navigation) => {
     const dataInput = {email: username, password: password};
@@ -90,6 +93,7 @@ export const AuthProvider = ({children}) => {
       if (userInfo) {
         setUserInfo(userInfo);
         setUserToken(userToken);
+        setSocket();
       }
 
       setIsLoading(false);

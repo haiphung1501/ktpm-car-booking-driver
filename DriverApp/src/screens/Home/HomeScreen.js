@@ -19,19 +19,25 @@ import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../config';
 
 import io from 'socket.io-client';
+import {useGlobalStore} from '../../store/globalStore';
+import {apiPut} from '../../apis/api';
 
 const HomeScreen = ({navigation}) => {
-  const [orders, setOrders] = useState([]);
   const [location, setLocation] = useState();
   const [loadingText, setLoadingText] = useState('Loading');
   const [isLoading, setIsLoading] = useState(true);
-  const isSocketConnectedRef = useRef(false);
+
   const {userInfo} = useContext(AuthContext);
-  const [socket, setSocket] = useState(
-    io('https://gofast-api.onrender.com/notification'),
-  );
+
+  const subscribeSocket = useGlobalStore.use.subscribeSocket();
+  const disconnect = useGlobalStore.use.disconnect();
+  const orders = useGlobalStore.use.orders();
+  const emitAcceptBookingEvent = useGlobalStore.use.emitAcceptBookingEvent();
+
   const [hasFetchedCurrentLocation, setHasFetchedCurrentLocation] =
     useState(false);
+
+  console.log('re-render');
 
   useEffect(() => {
     let textAnimationInterval = null;
@@ -51,16 +57,7 @@ const HomeScreen = ({navigation}) => {
       });
     }, 500);
 
-    if (!isSocketConnectedRef.current) {
-      socket.emit('driverAvailable', userInfo._id);
-      isSocketConnectedRef.current = true;
-      console.log('Check');
-      //TODO newBookings to global
-      socket.on('newBooking', newBookings => {
-        console.log('new booking', newBookings);
-        setOrders(newBookings);
-      });
-    }
+    subscribeSocket(userInfo);
 
     loadingTimeout = setTimeout(() => {
       setIsLoading(false);
@@ -70,10 +67,7 @@ const HomeScreen = ({navigation}) => {
     return () => {
       clearInterval(textAnimationInterval);
       clearTimeout(loadingTimeout);
-
-      if (socket) {
-        socket.disconnect();
-      }
+      disconnect();
     };
   }, []);
 
@@ -123,23 +117,16 @@ const HomeScreen = ({navigation}) => {
   };
 
   const acceptBooking = bookingId => {
-    socket.emit('acceptBooking', bookingId);
+    emitAcceptBookingEvent(bookingId);
 
-    // TODO updatedBooking to global
-    socket.on('bookingUpdate', updatedBooking => {
-      console.log('Received booking update:', updatedBooking.bookingStatus);
-    });
-
-    const dataInput = {
+    apiPut(`${BASE_URL}/booking/driver/accept/${bookingId}`, {
       driverLocation: {
         // lat: location.latitude,
         // lng: location.longitude,
         lat: 10.771928429159146,
         lng: 106.6510009088608,
       },
-    };
-    axios
-      .put(`${BASE_URL}/booking/driver/accept/${bookingId}`, dataInput)
+    })
       .then(res => {
         let bookingInfo = res.data.booking;
         navigation.navigate('Map', {booking: bookingInfo});
