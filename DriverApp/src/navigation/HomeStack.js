@@ -3,6 +3,7 @@ import AddAddressScreen from '../screens/Home/AddAddressScreen';
 import AddressScreen from '../screens/Home/AddressScreen';
 import HomeScreen from '../screens/Home/HomeScreen';
 import MapScreen from '../screens/Map/MapScreen';
+import ChatScreen from '../screens/Chat/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,13 @@ const HomeStack = () => {
           title: 'Bản đồ',
         }}
         component={MapScreen}
+      />
+      <Stack.Screen
+        name="Chat"
+        options={{
+          title: 'Message',
+        }}
+        component={ChatScreen}
       />
     </Stack.Navigator>
   );

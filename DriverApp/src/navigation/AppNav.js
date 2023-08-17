@@ -11,9 +11,13 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 const Drawer = createDrawerNavigator();
 import AuthStack from './AuthStack';
 import HomeBottomTab from './HomeBottomTab';
+import DashboardScreen from '../screens/Dashboard/DashboardScreen';
+import ChatScreen from '../screens/Chat/ChatScreen';
 
 const AppNav = () => {
   const {isLoading, userToken} = useContext(AuthContext);
+
+  // return <ChatScreen />;
 
   if (isLoading) {
     return (
