@@ -7,6 +7,7 @@ import ProfileScreen from '../screens/Profile/ProfileScreen';
 import EditProfileScreen from '../screens/Profile/EditProfileScreen';
 import HomeStack from './HomeStack';
 import HistoryStack from './HistoryStack';
+import ChatScreen from '../screens/Chat/ChatScreen';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
