@@ -46,6 +46,7 @@ const HistoryScreen = ({navigation}) => {
             <View key={index} className="shadow">
               <OrderItem
                 order={ORDER}
+                key={index}
                 onReview={() => navigation.navigate('Review', {order: ORDER})}
                 onClick={() => navigation.navigate('OrderDetail')}
               />

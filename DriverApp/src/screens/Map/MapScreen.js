@@ -20,8 +20,7 @@ import {BASE_URL, GOOGLE_MAPS_APIKEY} from '../../config';
 import {Button, Text} from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-import MessageStackScreen from '../../navigation/HomeBottomTab';
+import {useGlobalStore} from '../../store/globalStore';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.8;
@@ -41,7 +40,7 @@ MapScreen = ({route, navigation}) => {
   const DELTA_FACTOR = 0.00001;
 
   const Delta = (origin, destination) => {
-    console.log(booking.driverId);
+    // console.log(booking.driverId);
     const distance = geolib.getDistance(
       {latitude: origin.lat, longitude: origin.lng},
       {latitude: destination.lat, longitude: destination.lng},
@@ -155,6 +154,8 @@ MapScreen = ({route, navigation}) => {
       .then(res => {
         let bookingInfo = res.data.booking;
         console.log(bookingInfo);
+        // const isBooking = useGlobalStore.use.setBooking();
+        // isBooking();
         navigation.navigate('Home');
       })
       .catch(e => {
@@ -249,7 +250,10 @@ MapScreen = ({route, navigation}) => {
                   </Text>
                 </View>
                 <View className="w-8 h-8 rounded-full bg-green-600 items-center justify-center">
-                  <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Chat', {idBooking: booking._id})
+                    }>
                     <MaterialIcons name="chat" size={22} color="white" />
                   </TouchableOpacity>
                 </View>
