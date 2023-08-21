@@ -3,39 +3,54 @@ import {View, ScrollView, Text, Button, StyleSheet} from 'react-native';
 import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+import {BASE_URL} from '../../config';
+import {useGlobalStore} from '../../store/globalStore';
 
-const ChatScreen = () => {
+const ChatScreen = ({route, navigation}) => {
   const [messages, setMessages] = useState([]);
+  const {idBooking} = route.params;
+  const updatedBooking = useGlobalStore.use.bookingDetail();
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: 'Hello world',
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
-  }, []);
+    if (updatedBooking.messages.length > 0) {
+      console.log('Message: ', updatedBooking.messages);
+      if (
+        updatedBooking.messages[updatedBooking.messages.length - 1].sender
+          ._id === updatedBooking.userId._id
+      ) {
+        setMessages(previousMessages =>
+          GiftedChat.append(previousMessages, {
+            _id: updatedBooking.messages[updatedBooking.messages.length - 1]
+              ._id,
+            text: updatedBooking.messages[updatedBooking.messages.length - 1]
+              .content,
+            createdAt: new Date(),
+            user: {
+              _id: 2,
+              // name: 'React Native',
+              // avatar: 'https://placeimg.com/140/140/any',
+            },
+          }),
+        );
+      }
+    }
+  }, [updatedBooking]);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    );
+  const onSend = useCallback(messages => {
+    var dataInput = {content: messages[0].text};
+
+    axios
+      .put(`${BASE_URL}/booking/msg/${idBooking}`, dataInput)
+      .then(res => {
+        setMessages(previousMessages =>
+          GiftedChat.append(previousMessages, messages),
+        );
+      })
+      .catch(e => {
+        console.log(`Send message error ${e}`);
+      })
+      .finally(() => {});
   }, []);
 
   const renderSend = props => {

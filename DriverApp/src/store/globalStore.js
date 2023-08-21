@@ -8,6 +8,8 @@ const initialState = {
   isSocketConnected: false,
   orders: [],
   loading: true,
+  bookingDetail: null,
+  isBooking: 0,
 };
 
 export const useGlobalStore = createSelectors(
@@ -34,6 +36,10 @@ export const useGlobalStore = createSelectors(
           console.log('new booking');
           set({orders: newBookings});
         });
+        // socket.on('bookingUpdate', bookingUpdate => {
+        //   console.log('Booking update: ', {bookingUpdate});
+        //   set({bookingDetail: bookingUpdate});
+        // });
       }
     },
     emitAcceptBookingEvent: bookingId => {
@@ -41,14 +47,20 @@ export const useGlobalStore = createSelectors(
       if (!socket) return;
 
       socket.emit('acceptBooking', bookingId);
+
       socket.on('bookingUpdate', updatedBooking => {
         console.log('Received booking update:', updatedBooking.bookingStatus);
+        set({bookingDetail: updatedBooking});
+        set({isBooking: 1});
       });
     },
-    disconnect: () => {
-      const socket = get().socket;
-      if (!socket) return;
-      socket.disconnect();
+    setBooking: () => {
+      set({isBooking: 0});
     },
+    // disconnect: () => {
+    //   const socket = get().socket;
+    //   if (!socket) return;
+    //   socket.disconnect();
+    // },
   })),
 );

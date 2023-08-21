@@ -30,9 +30,11 @@ const HomeScreen = ({navigation}) => {
   const {userInfo} = useContext(AuthContext);
 
   const subscribeSocket = useGlobalStore.use.subscribeSocket();
-  const disconnect = useGlobalStore.use.disconnect();
+  // const disconnect = useGlobalStore.use.disconnect();
   const orders = useGlobalStore.use.orders();
   const emitAcceptBookingEvent = useGlobalStore.use.emitAcceptBookingEvent();
+  const bookingDetail = useGlobalStore.use.bookingDetail();
+  const isBooking = useGlobalStore.use.isBooking();
 
   const [hasFetchedCurrentLocation, setHasFetchedCurrentLocation] =
     useState(false);
@@ -63,13 +65,16 @@ const HomeScreen = ({navigation}) => {
       setIsLoading(false);
       clearInterval(textAnimationInterval);
     }, 5000);
-
+    if (isBooking === 1) {
+      // Navigate to MapScreen and pass bookingDetail as a prop
+      navigation.navigate('Map', {booking: bookingDetail});
+    }
     return () => {
       clearInterval(textAnimationInterval);
       clearTimeout(loadingTimeout);
-      disconnect();
+      // disconnect();
     };
-  }, []);
+  }, [isBooking]);
 
   const requestAccessPermission = () => {
     if (Platform.OS === 'ios') {
@@ -129,6 +134,7 @@ const HomeScreen = ({navigation}) => {
     })
       .then(res => {
         let bookingInfo = res.data.booking;
+        // console.log(location.latitude, location.longitude);
         navigation.navigate('Map', {booking: bookingInfo});
       })
       .catch(e => {
