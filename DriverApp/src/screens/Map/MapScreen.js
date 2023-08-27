@@ -20,7 +20,8 @@ import {BASE_URL, GOOGLE_MAPS_APIKEY} from '../../config';
 import {Button, Text} from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useGlobalStore} from '../../store/globalStore';
+
+import MessageStackScreen from '../../navigation/HomeBottomTab';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.8;
@@ -32,6 +33,7 @@ const DRAG_THRESHOLD = 50;
 
 MapScreen = ({route, navigation}) => {
   const {booking} = route.params;
+  console.log('location driver: ',booking.driverLocation);
   const status = ['Đã đón khách', 'Hoàn thành'];
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
@@ -125,15 +127,16 @@ MapScreen = ({route, navigation}) => {
       driverLocation: {
         // lat: location.latitude,
         // lng: location.longitude,
-        lat: 10.771928429159146,
-        lng: 106.6510009088608,
+        lat: booking.pickupLocation.lat,
+        lng: booking.pickupLocation.lng,
       },
     };
     axios
       .put(`${BASE_URL}/booking/driver/progress/${bookingId}`, dataInput)
       .then(res => {
         let bookingInfo = res.data.booking;
-        console.log(bookingInfo);
+        console.log(bookingInfo.driverLocation);
+        console.log(booking.driverLocation);
       })
       .catch(e => {
         console.log(`Booking error ${e}`);
@@ -145,8 +148,8 @@ MapScreen = ({route, navigation}) => {
       driverLocation: {
         // lat: location.latitude,
         // lng: location.longitude,
-        lat: 10.771928429159146,
-        lng: 106.6510009088608,
+        lat: booking.destination.lat,
+        lng: booking.destination.lat,
       },
     };
     axios
@@ -154,8 +157,6 @@ MapScreen = ({route, navigation}) => {
       .then(res => {
         let bookingInfo = res.data.booking;
         console.log(bookingInfo);
-        // const isBooking = useGlobalStore.use.setBooking();
-        // isBooking();
         navigation.navigate('Home');
       })
       .catch(e => {
@@ -250,10 +251,7 @@ MapScreen = ({route, navigation}) => {
                   </Text>
                 </View>
                 <View className="w-8 h-8 rounded-full bg-green-600 items-center justify-center">
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('Chat', {idBooking: booking._id})
-                    }>
+                  <TouchableOpacity onPress={() => navigation.navigate('Chat', {idBooking: booking._id})}>
                     <MaterialIcons name="chat" size={22} color="white" />
                   </TouchableOpacity>
                 </View>

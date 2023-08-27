@@ -28,8 +28,8 @@ const ChatScreen = ({route, navigation}) => {
             createdAt: new Date(),
             user: {
               _id: 2,
-              // name: 'React Native',
-              // avatar: 'https://placeimg.com/140/140/any',
+              name: updatedBooking.userId.displayName,
+              avatar: updatedBooking.userId.avatar.url,
             },
           }),
         );

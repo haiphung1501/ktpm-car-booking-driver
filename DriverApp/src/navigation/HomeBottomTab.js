@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View} from 'react-native-animatable';
+import DashboardScreen from '../screens/Dashboard/DashboardScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
@@ -125,6 +126,13 @@ const ProfileStackScreen = ({navigation}) => {
           title: 'Edit Profile',
         }}
         component={EditProfileScreen}
+      />
+      <ProfileStack.Screen
+        name="Dashboard"
+        options={{
+          title: 'Dashboard',
+        }}
+        component={DashboardScreen}
       />
     </ProfileStack.Navigator>
   );

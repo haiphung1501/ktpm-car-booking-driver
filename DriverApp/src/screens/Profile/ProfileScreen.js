@@ -17,7 +17,7 @@ import files from '../../assets/filesBase64';
 
 import {AuthContext} from '../../context/AuthContext';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   const {isLoading, userInfo} = useContext(AuthContext);
 
   const myCustomShare = async () => {
@@ -55,7 +55,7 @@ const ProfileScreen = () => {
                   marginBottom: 5,
                 },
               ]}>
-              Hoàng Mai
+              {userInfo.displayName}
             </Title>
             <Caption style={styles.caption}>{userInfo.role}</Caption>
           </View>
@@ -90,8 +90,8 @@ const ProfileScreen = () => {
               borderRightWidth: 1,
             },
           ]}>
-          <Title>140.50</Title>
-          <Caption>Points</Caption>
+          <Title>4.33</Title>
+          <Caption>Ratings</Caption>
         </View>
         <View style={styles.infoBox}>
           <Title>12</Title>
@@ -100,16 +100,10 @@ const ProfileScreen = () => {
       </View>
 
       <View style={styles.menuWrapper}>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Your Favorites</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={() => {navigation.navigate('Dashboard')}}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Payment</Text>
+            <Text style={styles.menuItemText}>Dashboard</Text>
           </View>
         </TouchableRipple>
         <TouchableRipple onPress={myCustomShare}>
@@ -122,12 +116,6 @@ const ProfileScreen = () => {
           <View style={styles.menuItem}>
             <Icon name="account-check-outline" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Support</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Ionicons name="settings-outline" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Settings</Text>
           </View>
         </TouchableRipple>
       </View>
