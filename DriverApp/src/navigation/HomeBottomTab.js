@@ -7,7 +7,6 @@ import ProfileScreen from '../screens/Profile/ProfileScreen';
 import EditProfileScreen from '../screens/Profile/EditProfileScreen';
 import HomeStack from './HomeStack';
 import HistoryStack from './HistoryStack';
-import ChatScreen from '../screens/Chat/ChatScreen';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -52,7 +51,7 @@ const HomeBottomTab = () => {
         component={HistoryStack}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="notification"
         options={{
           tabBarLabel: 'Thông báo',
@@ -61,13 +60,13 @@ const HomeBottomTab = () => {
           ),
         }}
         component={NotificationScreen}
-      />
+      /> */}
 
       <Tab.Screen
         name="profile"
         component={ProfileStackScreen}
         options={{
-          tabBarLabel: 'Profile',
+          tabBarLabel: 'Tài khoản',
           tabBarColor: '#694fad',
           tabBarIcon: ({color}) => (
             <Icon name="person" color={color} size={26} />
@@ -95,7 +94,7 @@ const ProfileStackScreen = ({navigation}) => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: 'Tài khoản',
           headerLeft: () => (
             <View>
               <Icon.Button
@@ -123,7 +122,7 @@ const ProfileStackScreen = ({navigation}) => {
       <ProfileStack.Screen
         name="EditProfile"
         options={{
-          title: 'Edit Profile',
+          title: 'Chỉnh Sửa Thông Tin',
         }}
         component={EditProfileScreen}
       />

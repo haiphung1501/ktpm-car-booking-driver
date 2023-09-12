@@ -44,10 +44,10 @@ const GridCard = ({title, value}) => {
 const coins = [
   {
     id: 1,
-    offerId: '#123456',
-    time: '2 mins',
-    image: require('../../assets/icons/bitcoin.png'),
-    amount: 'Accepted',
+    offerId: '#32',
+    time: '2 giờ',
+    image: require('../../assets/icons/ethereum.png'),
+    amount: 'Chấp nhận',
     points: '+3.42',
     type: 'I', //I = increase , D = Decrease
     wallet: {
@@ -57,10 +57,10 @@ const coins = [
   },
   {
     id: 2,
-    offerId: '#123456',
-    time: '2 mins',
+    offerId: '#31',
+    time: '5 ngày',
     image: require('../../assets/icons/ethereum.png'),
-    amount: 'Rejected',
+    amount: 'Từ chối',
     points: '-2.14',
     type: 'D', //I = increase , D = Decrease
     wallet: {
@@ -70,10 +70,10 @@ const coins = [
   },
   {
     id: 3,
-    offerId: '#123456',
-    time: '2 mins',
-    image: require('../../assets/icons/binance.png'),
-    amount: 'Accepted',
+    offerId: '#30',
+    time: '12 ngày',
+    image: require('../../assets/icons/ethereum.png'),
+    amount: 'Chấp nhận',
     points: '+10.22',
     type: 'I', //I = increase , D = Decrease
     wallet: {
@@ -141,13 +141,13 @@ const DashboardScreen = () => {
   const data = {
     earnings: [
       {x: 0, y: 0},
-      {x: 'Mon', y: 50},
-      {x: 'Tue', y: 30},
-      {x: 'Wed', y: 20},
-      {x: 'Thu', y: 80},
-      {x: 'Fri', y: 10},
-      {x: 'Sat', y: 40},
-      {x: 'Sun', y: 80},
+      {x: 'T2', y: 50},
+      {x: 'T3', y: 30},
+      {x: 'T4', y: 20},
+      {x: 'T5', y: 80},
+      {x: 'T6', y: 10},
+      {x: 'T7', y: 40},
+      {x: 'CN', y: 80},
     ],
   };
 
@@ -187,7 +187,7 @@ const DashboardScreen = () => {
                   fontSize: 16,
                   color: '#fff',
                 }}>
-                Welcome Back
+                Chào
               </Text>
               <Text
                 style={{
@@ -195,7 +195,7 @@ const DashboardScreen = () => {
                   color: '#fff',
                   fontSize: 22,
                 }}>
-                Hoang Mai
+                Duc Hai
               </Text>
             </View>
 
@@ -231,7 +231,7 @@ const DashboardScreen = () => {
                   fontSize: 28,
                   fontFamily: 'Roboto-Bold',
                 }}>
-                $32,7456.68
+                VNĐ 715,000
               </Text>
               <Text
                 style={{
@@ -239,7 +239,7 @@ const DashboardScreen = () => {
                   fontFamily: 'Roboto-Regular-Italic',
                   fontSize: 14,
                 }}>
-                Updated 2 mins ago
+                Cập nhật 2 phút trước
               </Text>
             </View>
 
@@ -291,28 +291,28 @@ const DashboardScreen = () => {
 
           <ActionCenter
             img_src={require('../../assets/icons/top-up.png')}
-            img_text="History"
+            img_text="Lịch sử"
           />
 
           <ActionCenter
             img_src={require('../../assets/icons/buy.png')}
-            img_text="Payments"
+            img_text="Thanh toán"
           />
 
           <ActionCenter
             img_src={require('../../assets/icons/withdraw.png')}
-            img_text="Cards"
+            img_text="Thẻ"
           />
 
-          <ActionCenter
+          {/* <ActionCenter
             img_src={require('../../assets/icons/withdraw.png')}
             img_text="Documents"
-          />
+          /> */}
 
-          <ActionCenter
+          {/* <ActionCenter
             img_src={require('../../assets/icons/withdraw.png')}
             img_text="Marketplace"
-          />
+          /> */}
         </View>
 
         <TouchableOpacity style={styles.dateRange}>
@@ -352,16 +352,18 @@ const DashboardScreen = () => {
               marginBottom: 5,
               marginTop: 5,
             }}>
-            Bookings
+            Đơn đặt
           </Text>
           <View style={styles.row}>
-            <GridCard title="Bookings" value="20" />
-            <GridCard title="Income" value="$369" />
+            <GridCard title="Thu nhập" value="VNĐ 715,000" />
           </View>
           <View style={styles.row}>
-            <GridCard title="Cash" value="$19" />
-            <GridCard title="Card" value="$100" />
-            <GridCard title="Account" value="$200" />
+            <GridCard title="Đơn" value="20" />
+            <GridCard title="Đơn huỷ" value="7" />
+          </View>
+          <View style={styles.row}>
+            <GridCard title="Tiền mặt" value="VNĐ 0" />
+            <GridCard title="Thẻ" value="VNĐ 715,000" />
           </View>
           <View style={{alignItems: 'center'}}>
             <VictoryChart>
@@ -382,7 +384,7 @@ const DashboardScreen = () => {
                 gutter={20}
                 data={[
                   {
-                    name: 'Earnings',
+                    name: 'Thu nhập',
                     symbol: {
                       fill: 'orange',
                     },
@@ -408,7 +410,7 @@ const DashboardScreen = () => {
                 color: '#333',
                 fontSize: 22,
               }}>
-              Booking Offers
+              Đơn gần đây
             </Text>
             <TouchableOpacity onPress={() => console.log('see all')}>
               <Text
@@ -417,7 +419,7 @@ const DashboardScreen = () => {
                   color: '#2249DA',
                   fontSize: 20,
                 }}>
-                See All
+                Xem thêm
               </Text>
             </TouchableOpacity>
           </View>

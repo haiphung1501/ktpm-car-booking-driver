@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, SafeAreaView, StyleSheet} from 'react-native';
+import {View, SafeAreaView, StyleSheet, Linking} from 'react-native';
 import {
   Avatar,
   Title,
@@ -34,6 +34,12 @@ const ProfileScreen = ({navigation}) => {
     } catch (error) {
       console.log('Error => ', error);
     }
+  };
+
+  const handleCall = () => {
+    const phoneNumber = '0918072617';
+    // Communications.phonecall(phoneNumber, true);
+    Linking.openURL(`tel:${phoneNumber}`);
   };
 
   return (
@@ -100,7 +106,10 @@ const ProfileScreen = ({navigation}) => {
       </View>
 
       <View style={styles.menuWrapper}>
-        <TouchableRipple onPress={() => {navigation.navigate('Dashboard')}}>
+        <TouchableRipple
+          onPress={() => {
+            navigation.navigate('Dashboard');
+          }}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Dashboard</Text>
@@ -109,13 +118,13 @@ const ProfileScreen = ({navigation}) => {
         <TouchableRipple onPress={myCustomShare}>
           <View style={styles.menuItem}>
             <Icon name="share-outline" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Tell Your Friends</Text>
+            <Text style={styles.menuItemText}>Chia sẻ với bạn bè</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={handleCall}>
           <View style={styles.menuItem}>
             <Icon name="account-check-outline" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Support</Text>
+            <Text style={styles.menuItemText}>Hỗ trợ (Hotline)</Text>
           </View>
         </TouchableRipple>
       </View>

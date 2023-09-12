@@ -2,7 +2,7 @@ import React from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Gaming from '../../assets/images/misc/gaming.svg';
+import Gaming from '../../assets/images/misc/login.svg';
 
 const OnboardingScreen = ({navigation}) => {
   return (
@@ -20,7 +20,7 @@ const OnboardingScreen = ({navigation}) => {
             fontSize: 30,
             color: '#20315f',
           }}>
-          TRAVEL
+          GO FAST
         </Text>
       </View>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

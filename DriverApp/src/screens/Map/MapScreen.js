@@ -21,8 +21,6 @@ import {Button, Text} from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import MessageStackScreen from '../../navigation/HomeBottomTab';
-
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.8;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.2;
@@ -33,7 +31,7 @@ const DRAG_THRESHOLD = 50;
 
 MapScreen = ({route, navigation}) => {
   const {booking} = route.params;
-  console.log('location driver: ',booking.driverLocation);
+  console.log('location driver: ', booking.driverLocation);
   const status = ['Đã đón khách', 'Hoàn thành'];
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
@@ -251,7 +249,10 @@ MapScreen = ({route, navigation}) => {
                   </Text>
                 </View>
                 <View className="w-8 h-8 rounded-full bg-green-600 items-center justify-center">
-                  <TouchableOpacity onPress={() => navigation.navigate('Chat', {idBooking: booking._id})}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Chat', {idBooking: booking._id})
+                    }>
                     <MaterialIcons name="chat" size={22} color="white" />
                   </TouchableOpacity>
                 </View>
