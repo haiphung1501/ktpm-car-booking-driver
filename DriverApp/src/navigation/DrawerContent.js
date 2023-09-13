@@ -35,7 +35,7 @@ export function DrawerContent(props) {
                 size={50}
               />
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                <Title style={styles.title}>Hoàng Mai</Title>
+                <Title style={styles.title}>Duc Hai</Title>
                 <Caption style={styles.caption}>{userInfo.role}</Caption>
               </View>
             </View>
@@ -61,7 +61,7 @@ export function DrawerContent(props) {
               icon={({color, size}) => (
                 <Icon name="home-outline" color={color} size={size} />
               )}
-              label="Home"
+              label="Trang chủ"
               onPress={() => {
                 props.navigation.navigate('Home');
               }}
@@ -72,7 +72,7 @@ export function DrawerContent(props) {
               )}
               label="Profile"
               onPress={() => {
-                props.navigation.navigate('Profile');
+                props.navigation.navigate('Tài khoản');
               }}
             />
           </Drawer.Section>
