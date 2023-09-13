@@ -22,7 +22,7 @@ import {Button, Text} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
-const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.8;
+const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT - 220;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.2;
 const MAX_UPWARD_TRANSLATE_Y =
   BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT;
