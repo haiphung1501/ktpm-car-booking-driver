@@ -1,3 +1,3 @@
 # ktpm-car-booking-driver
-App for driver\n
-Read file ReadMe in folder DriverApp to know how to install app
+App for driver - 
+Read file README.md in folder DriverApp to know how to install app
